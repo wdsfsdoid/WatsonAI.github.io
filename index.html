@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Welcome</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    min-height:100vh;display:grid;place-items:center;
+    background:#0d1117;color:#e6edf3;overflow:hidden;
+    font-family:-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  /* светящийся градиент на фоне */
+  .glow{
+    position:fixed;width:900px;height:900px;border-radius:50%;
+    background:radial-gradient(circle,rgba(88,166,255,.25),transparent 60%);
+    top:-300px;left:-200px;filter:blur(40px);
+    animation:drift 14s ease-in-out infinite alternate;
+  }
+  @keyframes drift{to{transform:translate(300px,200px) scale(1.2)}}
+
+  /* плавающие «коммиты» */
+  .dot{
+    position:fixed;width:10px;height:10px;border-radius:50%;
+    background:#3fb950;box-shadow:0 0 12px #3fb950;
+    animation:float linear infinite;
+  }
+  @keyframes float{
+    from{transform:translateY(100vh) scale(.5);opacity:0}
+    20%{opacity:1}
+    to{transform:translateY(-10vh) scale(1.1);opacity:0}
+  }
+
+  .card{
+    position:relative;z-index:2;text-align:center;padding:48px 40px;
+    border:1px solid #30363d;border-radius:16px;
+    background:rgba(22,27,34,.7);backdrop-filter:blur(12px);
+    animation:rise .9s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(30px)}}
+
+  h1{
+    font-size:clamp(28px,6vw,52px);
+    background:linear-gradient(90deg,#58a6ff,#3fb950,#58a6ff);
+    background-size:200% auto;-webkit-background-clip:text;
+    background-clip:text;color:transparent;
+    animation:shine 4s linear infinite;
+  }
+  @keyframes shine{to{background-position:200% center}}
+
+  #type{
+    margin-top:16px;font-size:16px;color:#8b949e;min-height:24px;
+  }
+  #type::after{
+    content:"▌";margin-left:2px;animation:blink .8s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0}}
+
+  .btn{
+    display:inline-block;margin-top:28px;padding:12px 28px;
+    border-radius:8px;background:#238636;color:#fff;text-decoration:none;
+    font-weight:600;position:relative;overflow:hidden;transition:.25s;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(63,185,80,.4)}
+  .btn::before{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,.35),transparent);
+    transform:translateX(-100%);
+  }
+  .btn:hover::before{animation:sweep .7s}
+  @keyframes sweep{to{transform:translateX(100%)}}
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+
+  <div class="card">
+    <h1>Welcome to GitHub</h1>
+    <p id="type"></p>
+    <a class="btn" href="#">Get started</a>
+  </div>
+
+<script>
+  // плавающие точки
+  for (let i = 0; i < 18; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.style.left = Math.random() * 100 + 'vw';
+    d.style.animationDuration = (6 + Math.random() * 8) + 's';
+    d.style.animationDelay = (-Math.random() * 10) + 's';
+    document.body.appendChild(d);
+  }
+
+  // печатающийся текст
+  const phrases = [
+    'где код превращается в проекты',
+    'commit · push · pull request',
+    'собери. сломай. починь. повтори.'
+  ];
+  const el = document.getElementById('type');
+  let p = 0, c = 0, del = false;
+
+  function tick() {
+    const txt = phrases[p];
+    el.textContent = txt.slice(0, c);
+    if (!del && c < txt.length) c++;
+    else if (!del) { del = true; return setTimeout(tick, 1600); }
+    else if (c > 0) c--;
+    else { del = false; p = (p + 1) % phrases.length; }
+    setTimeout(tick, del ? 45 : 90);
+  }
+  tick();
+</script>
+</body>
+</html>
